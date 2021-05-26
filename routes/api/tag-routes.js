@@ -46,22 +46,23 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
-  // update a tag's name by its `id` value
-  try {
-    const updateTag = await Tag.update({
-      where: {
-        id: req.params.id,
-      }
-    });
-    if (!updateTag) {
-      res.status(404).json({ message: 'No tag found with this id!' });
-      return;
+router.put('/:id', (req, res) => {
+  Tag.update(req.body, {
+    where: {
+      id: req.params.id
     }
-    res.status(200).json(updateTag);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  })
+    .then(updateTag => {
+      if (!updateTag) {
+        res.status(404).json({ message: 'No tag found with this id!' });
+        return;
+      }
+      res.json(updateTag);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.delete('/:id', async (req, res) => {
